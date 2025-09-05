@@ -11,6 +11,7 @@ df = pd.read_csv(csv_path)
 
 particiones = generar_particiones_estratificadas(df, 100)
 
+modelos = ['1NN', '3NN', '5NN', 'Naive Bayes']
 medidas_1NN = []
 
 for X_Train, Y_Train, X_Test, Y_Test in particiones:
