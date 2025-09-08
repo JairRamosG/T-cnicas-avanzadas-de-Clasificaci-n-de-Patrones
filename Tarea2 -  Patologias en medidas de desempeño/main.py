@@ -16,7 +16,7 @@ test_path = os.path.join(BASE_DIR, "datasets", "Test.xlsx")
 
 nombre_algoritmos = ['1NN']
 df_resultados = []
-clase_positiva = 1
+clase_positiva = 0
 
 df_train = pd.read_excel(train_path)
 df_test = pd.read_excel(test_path)
