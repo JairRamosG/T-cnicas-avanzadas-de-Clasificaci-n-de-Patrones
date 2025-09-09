@@ -1,32 +1,8 @@
-import pandas as pd
-from sklearn.metrics import confusion_matrix
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
-from pathlib import Path
-import numpy as np
 
-
-def guarda_matriz(cm, algoritmo, clase_positiva):
-    '''
-    Utiliza las prediciónes para guardar una imagen de las matrices de confusión
-    '''
-
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    nombre_archivo = f'{algoritmo}_positiva_{clase_positiva}'
-    ruta= os.path.join(BASE_DIR, 'imagenes', nombre_archivo)
-
-    cm_vis = [[cm[1,1], cm[1,0]], [cm[0,1], cm[0,0]]]
-
-    plt.figure(figsize=(6,5))
-    sns.heatmap(cm_vis, annot=True, fmt='d', cmap='Blues', xticklabels=['Pos', 'Neg'], yticklabels=['Pos', 'Neg'], cbar=False)
-
-    plt.xlabel('Prediccion')
-    plt.ylabel('Real')
-    plt.title(nombre_archivo)
-    plt.savefig(ruta, dpi=300, bbox_inches='tight')
-
-def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiva):
+def evaluar_matriz_confusion(conf_matrix):
     """
     Recibe una matriz de confusión 2x2 y calcula medidas de desempeño junto con la gráfica.
 
@@ -34,12 +10,6 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
                  [[TN, FP],
                   [FN, TP]]
     """
-
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    nombre_archivo = f'{algoritmo}_positiva_{clase_positiva}'
-    ruta= os.path.join(BASE_DIR, 'imagenes', nombre_archivo)
-
-    conf_matrix = confusion_matrix(y_test, y_pred, labels = etiquetas)
     
     TN, FP, FN, TP = conf_matrix[0,0], conf_matrix[0,1], conf_matrix[1,0], conf_matrix[1,1]
 
@@ -73,14 +43,15 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
 
 
     plt.figure(figsize=(6,4))
-    sns.heatmap(conf_custom, annot=True, fmt="d", cmap="Blues", xticklabels=["Pred. Pos", "Pred. Neg"], yticklabels=["Real Pos", "Real Neg"], cbar = False)
+    sns.heatmap(conf_custom, annot=True, fmt="d", cmap="Blues",
+                xticklabels=["Pred. Pos", "Pred. Neg"],   
+                yticklabels=["Real Pos", "Real Neg"])
     plt.title("Matriz de Confusión (formato [TP,FN]/[FP,TN])")
     plt.ylabel("Valor Real")
     plt.xlabel("Predicción")
-    plt.savefig(ruta, dpi=300, bbox_inches='tight')
     plt.show()
 
-    '''# Diccionario para usar después si es necesario
+    # Diccionario para usar después si es necesario
     metricas = {
         "Accuracy": accuracy,
         "Error Rate": error_rate,
@@ -91,4 +62,10 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
         "F1-Score": f1_score,
         "MCC": mcc
     }
-    return metricas'''
+    return metricas
+
+# Configurar matriz de confusión
+conf_matrix = np.array([[39, 3],   # TN, FP
+                        [4, 11]])  # FN, TP
+
+resultados = evaluar_matriz_confusion(conf_matrix)

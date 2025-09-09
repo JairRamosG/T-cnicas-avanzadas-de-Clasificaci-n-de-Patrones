@@ -8,15 +8,21 @@ if BASE_DIR not in sys.path:
 
 from proyecto.utils.estandarizar_df import estandarizar_df
 from proyecto.utils.modelos import entrenar_modelo, predecir_modelo
-from proyecto.utils.medidas_desempeno import calcula_medidas
 from proyecto.utils.ajustar_clases import ajustar_clases
+from proyecto.utils.medidas_desempeno import evaluar_matriz_confusion
 
 train_path = os.path.join(BASE_DIR, "datasets", "Train.xlsx")
 test_path = os.path.join(BASE_DIR, "datasets", "Test.xlsx")
 
 nombre_algoritmos = ['1NN']
 df_resultados = []
-clase_positiva = 0
+positiva = 0
+
+if positiva == 1:
+    etiquetas = [1,0]
+else:
+    etiquetas = [0,1]
+
 
 df_train = pd.read_excel(train_path)
 df_test = pd.read_excel(test_path)
@@ -39,9 +45,5 @@ for algoritmo in nombre_algoritmos:
     modelo = entrenar_modelo(algoritmo, X_train, Y_train)
     Y_pred = predecir_modelo(modelo, X_test)
 
-    df_medidas = calcula_medidas(Y_test, Y_pred, clase_positiva, algoritmo)
-    medidas.append(df_medidas)
+    evaluar_matriz_confusion(Y_test, Y_pred, etiquetas, algoritmo, positiva)
 
-
-
-print(medidas)
