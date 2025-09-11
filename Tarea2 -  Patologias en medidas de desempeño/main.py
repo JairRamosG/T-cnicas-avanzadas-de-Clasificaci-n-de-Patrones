@@ -9,14 +9,14 @@ if BASE_DIR not in sys.path:
 from proyecto.utils.estandarizar_df import estandarizar_df
 from proyecto.utils.modelos import entrenar_modelo, predecir_modelo
 from proyecto.utils.ajustar_clases import ajustar_clases
-from proyecto.utils.medidas_desempeno import evaluar_matriz_confusion
+from proyecto.utils.medidas_desempeno import evaluar_matriz_confusion, genera_tabla, guarda_tabla
 
 train_path = os.path.join(BASE_DIR, "datasets", "Train.xlsx")
 test_path = os.path.join(BASE_DIR, "datasets", "Test.xlsx")
 
-nombre_algoritmos = ['1NN']
-df_resultados = []
 positiva = 0
+nombre_algoritmos = ['1NN', '3NN', '5NN', 'SVM', 'Naive Bayes', 'RF']
+df_resultados = []
 
 if positiva == 1:
     etiquetas = [1,0]
@@ -45,5 +45,8 @@ for algoritmo in nombre_algoritmos:
     modelo = entrenar_modelo(algoritmo, X_train, Y_train)
     Y_pred = predecir_modelo(modelo, X_test)
 
-    evaluar_matriz_confusion(Y_test, Y_pred, etiquetas, algoritmo, positiva)
+    df_resultados_modelo = evaluar_matriz_confusion(Y_test, Y_pred, etiquetas, algoritmo, positiva)
+    df_resultados.append(df_resultados_modelo)
 
+resultados_finales = genera_tabla(df_resultados)
+guarda_tabla(resultados_finales, positiva)

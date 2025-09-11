@@ -7,24 +7,7 @@ from pathlib import Path
 import numpy as np
 
 
-def guarda_matriz(cm, algoritmo, clase_positiva):
-    '''
-    Utiliza las prediciónes para guardar una imagen de las matrices de confusión
-    '''
-
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    nombre_archivo = f'{algoritmo}_positiva_{clase_positiva}'
-    ruta= os.path.join(BASE_DIR, 'imagenes', nombre_archivo)
-
-    cm_vis = [[cm[1,1], cm[1,0]], [cm[0,1], cm[0,0]]]
-
-    plt.figure(figsize=(6,5))
-    sns.heatmap(cm_vis, annot=True, fmt='d', cmap='Blues', xticklabels=['Pos', 'Neg'], yticklabels=['Pos', 'Neg'], cbar=False)
-
-    plt.xlabel('Prediccion')
-    plt.ylabel('Real')
-    plt.title(nombre_archivo)
-    plt.savefig(ruta, dpi=300, bbox_inches='tight')
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiva):
     """
@@ -35,7 +18,6 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
                   [FN, TP]]
     """
 
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
     nombre_archivo = f'{algoritmo}_positiva_{clase_positiva}'
     ruta= os.path.join(BASE_DIR, 'imagenes', nombre_archivo)
 
@@ -59,19 +41,6 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
     mcc_den = np.sqrt((TP + FP)*(TP + FN)*(TN + FP)*(TN + FN))
     mcc = mcc_num / mcc_den if mcc_den != 0 else 0
 
-
-    print("MEDIDAS DE DESEMPEÑO:\n")
-    print(f" Accuracy = (TP + TN) / (TP + TN + FP + FN) = ({TP} + {TN}) / ({TP} + {TN} + {FP} + {FN}) = {accuracy:.4f}")
-    print(f" Error Rate = 1 - Accuracy = 1 - {accuracy:.4f} = {error_rate:.4f}")
-    print(f" Recall (Sensitivity) = TP / (TP + FN) = {TP} / ({TP} + {FN}) = {recall:.4f}")
-    print(f" Specificity = TN / (TN + FP) = {TN} / ({TN} + {FP}) = {specificity:.4f}")
-    print(f" Balanced Accuracy = (Recall + Specificity) / 2 = ({recall:.4f} + {specificity:.4f}) / 2 = {balanced_accuracy:.4f}")
-    print(f" Precision = TP / (TP + FP) = {TP} / ({TP} + {FP}) = {precision:.4f}")
-    print(f" F1-Score = 2 * (Precision * Recall) / (Precision + Recall) = 2 * ({precision:.4f} * {recall:.4f}) / ({precision:.4f} + {recall:.4f}) = {f1_score:.4f}")
-    print(f" MCC = (TP*TN – FP*FN) / √((TP+FP)(TP+FN)(TN+FP)(TN+FN))")
-    print(f"     = ({TP}*{TN} – {FP}*{FN}) / √(({TP}+{FP})({TP}+{FN})({TN}+{FP})({TN}+{FN})) = {mcc:.4f}\n")
-
-
     plt.figure(figsize=(6,4))
     sns.heatmap(conf_custom, annot=True, fmt="d", cmap="Blues", xticklabels=["Pred. Pos", "Pred. Neg"], yticklabels=["Real Pos", "Real Neg"], cbar = False)
     plt.title("Matriz de Confusión (formato [TP,FN]/[FP,TN])")
@@ -80,15 +49,35 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
     plt.savefig(ruta, dpi=300, bbox_inches='tight')
     plt.show()
 
-    '''# Diccionario para usar después si es necesario
-    metricas = {
-        "Accuracy": accuracy,
-        "Error Rate": error_rate,
-        "Recall": recall,
-        "Specificity": specificity,
-        "Balanced Accuracy": balanced_accuracy,
-        "Precision": precision,
-        "F1-Score": f1_score,
-        "MCC": mcc
+    # Diccionario para usar en una función que guarde los resultados en un dataframe
+    medidas = {
+        "Accuracy": np.round(accuracy, 4),
+        "Error Rate": np.round(error_rate,4),
+        "Recall": np.round(recall, 4),
+        "Specificity": np.round(specificity,4),
+        "Balanced Accuracy": np.round(balanced_accuracy, 4),
+        "Precision": np.round(precision,4),
+        "F1-Score": np.round(f1_score,4),
+        "MCC": np.round(mcc,4)
     }
-    return metricas'''
+    return pd.DataFrame(list(medidas.items()), columns = ['Medida', 'Valor'])
+
+def genera_tabla(df_resultados):
+    '''
+    Recibe una lista de DataFrames con los resultados de las medidas de los modelos seleccionados, y lo guarda en una carpeta.
+    '''
+    df_resultados = pd.concat(df_resultados).reset_index(drop = True)
+    df_resultados['Iteración'] = df_resultados.groupby('Medida').cumcount()
+    tabla_final = df_resultados.pivot(index = 'Iteración', columns = 'Medida', values = 'Valor').reset_index(drop = True)
+
+    return tabla_final
+
+def guarda_tabla(tabla_final, positiva):
+
+    '''
+    Guarda la tabla de resultados por tipo de clase positiva en una carpeta.
+    '''
+    nombre_tabla =  f'Clase_positiva_{positiva}'
+    ruta= os.path.join(BASE_DIR, 'tablas', nombre_tabla)
+
+    tabla_final.to_csv(ruta, index = False)
