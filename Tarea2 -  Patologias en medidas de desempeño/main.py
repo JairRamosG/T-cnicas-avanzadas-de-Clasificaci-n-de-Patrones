@@ -14,7 +14,7 @@ from proyecto.utils.medidas_desempeno import evaluar_matriz_confusion, genera_ta
 train_path = os.path.join(BASE_DIR, "datasets", "Train.xlsx")
 test_path = os.path.join(BASE_DIR, "datasets", "Test.xlsx")
 
-positiva = 0
+positiva = 1
 nombre_algoritmos = ['1NN', '3NN', '5NN', 'SVM', 'Naive Bayes', 'RF']
 df_resultados = []
 
@@ -48,5 +48,7 @@ for algoritmo in nombre_algoritmos:
     df_resultados_modelo = evaluar_matriz_confusion(Y_test, Y_pred, etiquetas, algoritmo, positiva)
     df_resultados.append(df_resultados_modelo)
 
-resultados_finales = genera_tabla(df_resultados)
+resultados_finales = genera_tabla(df_resultados, nombre_algoritmos)
 guarda_tabla(resultados_finales, positiva)
+
+

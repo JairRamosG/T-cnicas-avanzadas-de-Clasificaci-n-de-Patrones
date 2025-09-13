@@ -62,15 +62,31 @@ def evaluar_matriz_confusion(y_test, y_pred, etiquetas, algoritmo, clase_positiv
     }
     return pd.DataFrame(list(medidas.items()), columns = ['Medida', 'Valor'])
 
-def genera_tabla(df_resultados):
+def genera_tabla(df_resultados, nombre_algoritmos):
     '''
-    Recibe una lista de DataFrames con los resultados de las medidas de los modelos seleccionados, y lo guarda en una carpeta.
+    Recibe una lista de DataFrames con los resultados de las medidas de los modelos seleccionados
+    Recibe una lista con los nombre de cada modelo
+    Crea un DataFrame concatenando los dos DataFrames anteriores
+    y lo guarda en una carpeta.
     '''
-    df_resultados = pd.concat(df_resultados).reset_index(drop = True)
-    df_resultados['Iteración'] = df_resultados.groupby('Medida').cumcount()
-    tabla_final = df_resultados.pivot(index = 'Iteración', columns = 'Medida', values = 'Valor').reset_index(drop = True)
+
+    lista_final = []
+
+    for df, nombre in zip(df_resultados, nombre_algoritmos):
+        df_temp = df.copy()
+        df_temp["Algoritmo"] = nombre
+        lista_final.append(df_temp)
+
+    df_resultados = pd.concat(lista_final).reset_index()
+
+    tabla_final = df_resultados.pivot(
+        index = "Algoritmo",
+        columns = "Medida",
+        values = "Valor"
+    ).reset_index()
 
     return tabla_final
+
 
 def guarda_tabla(tabla_final, positiva):
 
