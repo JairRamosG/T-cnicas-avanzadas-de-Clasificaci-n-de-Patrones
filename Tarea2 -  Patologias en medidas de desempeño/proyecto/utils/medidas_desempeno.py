@@ -77,13 +77,13 @@ def genera_tabla(df_resultados, nombre_algoritmos):
         df_temp["Algoritmo"] = nombre
         lista_final.append(df_temp)
 
-    df_resultados = pd.concat(lista_final).reset_index()
+    df_resultados = pd.concat(lista_final)
 
     tabla_final = df_resultados.pivot(
         index = "Algoritmo",
         columns = "Medida",
         values = "Valor"
-    ).reset_index()
+    )
 
     return tabla_final
 
