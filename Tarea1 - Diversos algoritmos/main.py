@@ -1,3 +1,5 @@
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import LeaveOneOut, GridSearchCV
 import pandas as pd
 import os
 
@@ -7,9 +9,13 @@ from medidas_desempeño import calcula_medidas
 from generar_tabla import generar_tabla
 
 base_path = os.path.dirname(__file__)
-csv_path = os.path.join(base_path, 'datasets', 'crx_limpio.csv')
+csv_path = os.path.join(base_path, 'data', 'clean_data',  'campus_selection_limpio.csv')
 df = pd.read_csv(csv_path)
+print(df.head())
 
+
+
+'''
 particiones = generar_particiones_estratificadas(df, 100)
 
 nombre_modelos = ['1NN', '3NN', '5NN', 'Naive Bayes']
@@ -27,4 +33,4 @@ for nombre in nombre_modelos:
     df_promedios.append(generar_tabla(medidas, nombre))
 
 print(pd.concat(df_promedios, axis = 1))
-
+'''
