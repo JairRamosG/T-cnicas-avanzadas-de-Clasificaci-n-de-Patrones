@@ -1,10 +1,10 @@
-from sklearn.metrics import (accuracy_score, balanced_accuracy_score,f1_score)
+from sklearn.metrics import (accuracy_score, balanced_accuracy_score,f1_score, cohen_kappa_score, matthews_corrcoef)
 import pandas as pd
 import numpy as np
 
 def calcula_medidas(y_test, y_pred):
     '''
-    Calculas las medidas de desempeño solicitadas en las instrucciones
+    Calculas las medidas de desempeño solicitadas en las instrucciones parte 1
     regresa una tabla con las medidas
     '''
     metrics = {
@@ -16,6 +16,30 @@ def calcula_medidas(y_test, y_pred):
     }
 
     return metrics
+
+##Aqui le optimice el calculo de las medidas porque arriba lo calcule doble y por eso también se tardaba mucho
+
+def calcula_medidas_2(y_test, y_pred):
+    '''
+    Calculas las medidas de desempeño solicitadas en las instrucciones parte 2
+    regresa una tabla con las medidas
+    '''
+    kappa_val = np.round(cohen_kappa_score(y_test, y_pred), 4),
+    mcc_val = np.round(matthews_corrcoef(y_test, y_pred), 4)
+    ba_val = np.round(balanced_accuracy_score(y_test, y_pred),4)
+    f1_score_val = np.round(f1_score(y_test, y_pred),4)
+
+    metrics = {
+        'Kappa': kappa_val,
+        'MCC': mcc_val,
+        'Balanced Accuracy': ba_val,
+        'F1 Score': f1_score_val
+    }
+
+    return metrics
+
+
+
 
 
 
