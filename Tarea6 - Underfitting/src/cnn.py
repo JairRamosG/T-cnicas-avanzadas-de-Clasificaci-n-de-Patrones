@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
 
 def CNN(X, y):
 
@@ -40,3 +41,42 @@ def CNN(X, y):
     df_reducido['target'] = Sy_array
     
     return df_reducido
+
+
+def condensed_nearest_neighbors(X, y):
+    """
+    Implementación del algoritmo Condensed Nearest Neighbors (CNN).
+    X: matriz de características (numpy array)
+    y: vector de etiquetas (numpy array)
+    Retorna: subconjunto condensado (X_cond, y_cond)
+    """
+
+    X = np.array(X)
+    y = np.array(y)
+
+    rng = np.random.default_rng()
+    idx = rng.integers(0, len(X))
+    
+    X_cond = np.array([X[idx]])
+    y_cond = np.array([y[idx]])
+
+    changed = True
+
+    while changed:
+        changed = False
+
+        for xi, yi in zip(X, y):
+            knn = KNeighborsClassifier(n_neighbors=1)
+            knn.fit(X_cond, y_cond)
+
+            y_pred = knn.predict([xi])[0]
+
+            if y_pred != yi:
+                X_cond = np.vstack([X_cond, xi])
+                y_cond = np.append(y_cond, yi)
+                changed = True
+
+    df_cond = pd.DataFrame(X_cond)
+    df_cond['target'] = y_cond
+    
+    return df_cond
