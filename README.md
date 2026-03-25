@@ -2,7 +2,6 @@
 
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/ML-Scikit--learn%20%7C%20XGBoost%20%7C%20PyTorch-orange?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Técnicas-PCA%20%7C%20MICE%20%7C%20SMOTE%20%7C%20Ensemble-brightgreen?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Status-Reference%20Repository-blue?style=for-the-badge"/>
 </div>
